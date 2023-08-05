@@ -2,7 +2,7 @@ name: Build and Push React App Docker Image
 on:
   push:
     branches:
-      - master  # Adjust the branch name if needed
+      - master  # Adjusted the branch name as needed
 
 jobs:
   build-and-push:
