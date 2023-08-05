@@ -1,8 +1,8 @@
-name: Build and Push JSON Image to DockerHub
+name: Build and Push React App Docker Image
 on:
   push:
     branches:
-      - main  # Adjust the branch name if needed
+      - master  # Adjust the branch name if needed
 
 jobs:
   build-and-push:
@@ -17,25 +17,25 @@ jobs:
         with:
           aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
           aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-          aws-region: us-west-2  # Adjust the region based on your EKS cluster
+          aws-region: us-east-1  # Replace with your desired AWS region
 
-      - name: Install kubectl
+      - name: Install Node.js and npm
         run: |
-          sudo apt-get update && sudo apt-get install -y apt-transport-https
-          curl -s https://packages.cloud.google.com/apt/doc/apt-key.gpg | sudo apt-key add -
-          echo "deb https://apt.kubernetes.io/ kubernetes-xenial main" | sudo tee -a /etc/apt/sources.list.d/kubernetes.list
           sudo apt-get update
-          sudo apt-get install -y kubectl
+          sudo apt-get install -y nodejs npm
 
-      - name: Build JSON Image
+      - name: Build React App
         run: |
-          cd package-lock.json  # Replace with the actual path to your JSON app
-          docker build -t your-dockerhub-username/json-image:latest .
+          cd react-app  # Replace with the actual path to your React app
+          npm install
+          npm run build
 
       - name: Log in to DockerHub
         run: |
           docker login -u ${{ secrets.DOCKER_USERNAME }} -p ${{ secrets.DOCKER_PASSWORD }}
 
-      - name: Push JSON Image to DockerHub
+      - name: Build and Push Docker Image
         run: |
-          docker push nanaai08/json-image:latest
+          cd react-app  # Replace with the actual path to your React app
+          docker build -t ${{ secrets.DOCKER_USERNAME }}/react-app-image:latest .
+          docker push ${{ secrets.DOCKER_USERNAME }}/react-app-image:latest
